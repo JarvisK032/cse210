@@ -1,139 +1,128 @@
 ﻿//Tic-Tac-Toe by Jarvis Kwong
 using System;
-using System.Collections.Generic;
 
 namespace Test
 {
     public class Program
     {
+        static char[] arr = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        static int player = 1; 
+        static int choice; 
+        static int flag = 0;
+
         public static void Main(string[] args)
         {
-            List<string> board = GetNewBoard();
-            string currentPlayer = "X";
-
-            while (!GameOver(board))
+            do
             {
-                DisplayBoard(board);
-
-                int choice = GetMoveChoice(currentPlayer);
-                MakeMove(board, choice, currentPlayer);
-
-                currentPlayer = Next(currentPlayer);
+                Board();
+                if (player % 2 == 0)
+                {
+                    Console.WriteLine("O's turn to choose a square (1-9): ");
+                }
+                else
+                {
+                    Console.WriteLine("X's turn to choose a square (1-9): ");
+                }
+                choice = int.Parse(Console.ReadLine());
+                if (arr[choice] != 'X' && arr[choice] != 'O')
+                {
+                    if (player % 2 == 0) 
+                    {
+                        arr[choice] = 'O';
+                        player++;
+                    }
+                    else
+                    {
+                        arr[choice] = 'X';
+                        player++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Sorry the row {0} is already marked with {1}", choice, arr[choice]);
+                }
+                flag = CheckWin();
             }
-
-            DisplayBoard(board);
-
-            if (Win(board, "X"))
-            {
-                Console.WriteLine("X win");
-            }
-            else if (Win(board, "O"))
-            {
-                Console.WriteLine("O win");
-            }
+            while (flag != 1 && flag != -1);
+            Board();
+            if (flag == 1)
+            {   
+                if(player % 2 + 1 == 1)
+                {
+                Console.WriteLine("X's won");
+                Console.WriteLine("Good game. Thanks for playing!");
+                }
+                else
+                {
+                Console.WriteLine("O's won");
+                Console.WriteLine("Good game. Thanks for playing!");
+                }
+            }              
             else
             {
                 Console.WriteLine("Draw");
+                Console.WriteLine("Good game. Thanks for playing!"); 
             }
-
         }
-
-        static List<string> GetNewBoard()
+        private static void Board()
         {
-            List<string> board = new List<string>();
 
-            for (int i = 1; i <= 9; i++)
-            {
-                board.Add(i.ToString());
-            }
-
-            return board;
-        }
-
-        static void DisplayBoard(List<string> board)
-        {
-            Console.WriteLine($"{board[0]}|{board[1]}|{board[2]}");
+            Console.WriteLine("{0}|{1}|{2}", arr[1], arr[2], arr[3]);
             Console.WriteLine("-+-+-");
-            Console.WriteLine($"{board[3]}|{board[4]}|{board[5]}");
+            Console.WriteLine("{0}|{1}|{2}", arr[4], arr[5], arr[6]);
             Console.WriteLine("-+-+-");
-            Console.WriteLine($"{board[6]}|{board[7]}|{board[8]}");
+            Console.WriteLine("{0}|{1}|{2}", arr[7], arr[8], arr[9]);
         }
-
-        static bool GameOver(List<string> board)
+        private static int CheckWin()
         {
-            bool isGameOver = false;
-
-            if (Win(board, "X") || Win(board, "O") || Tie(board))
+            #region Horzontal Winning Condtion
+            if (arr[1] == arr[2] && arr[2] == arr[3])
             {
-                isGameOver = true;
+                return 1;
             }
-
-            return isGameOver;
-        }
-
-        static bool Win(List<string> board, string player)
-        {
-
-            bool isWinner = false;
-
-            if ((board[0] == player && board[1] == player && board[2] == player)
-                || (board[3] == player && board[4] == player && board[5] == player)
-                || (board[6] == player && board[7] == player && board[8] == player)
-                || (board[0] == player && board[3] == player && board[6] == player)
-                || (board[1] == player && board[4] == player && board[7] == player)
-                || (board[2] == player && board[5] == player && board[8] == player)
-                || (board[0] == player && board[4] == player && board[8] == player)
-                || (board[2] == player && board[4] == player && board[6] == player)
-                )
+            else if (arr[4] == arr[5] && arr[5] == arr[6])
             {
-                isWinner = true;
+                return 1;
             }
-
-            return isWinner; 
-        }
-
-        static bool Tie(List<string> board)
-        {
-            bool foundDigit = false;
-
-            foreach (string value in board)
+            else if (arr[6] == arr[7] && arr[7] == arr[8])
             {
-                if (char.IsDigit(value[0]))
-                {
-                    foundDigit = true;
-                    break;
-                }
+                return 1;
             }
-
-            return !foundDigit;
-        }
-
-        static string Next(string currentPlayer)
-        {
-            string nextPlayer = "X";
-
-            if (currentPlayer == "X")
+            #endregion
+            #region vertical Winning Condtion
+            else if (arr[1] == arr[4] && arr[4] == arr[7])
             {
-                nextPlayer = "O";
+                return 1;
             }
-
-            return nextPlayer;
-        }
-
-        static int GetMoveChoice(string currentPlayer)
-        {
-            Console.Write($"{currentPlayer}'s turn to choose a square (1-9): ");
-            string move_string = Console.ReadLine();
-
-            int choice = int.Parse(move_string);
-            return choice;
-        }
-
-        static void MakeMove(List<string> board, int choice, string currentPlayer)
-        {
-            int index = choice - 1;
-
-            board[index] = currentPlayer;
+            else if (arr[2] == arr[5] && arr[5] == arr[8])
+            {
+                return 1;
+            }
+            else if (arr[3] == arr[6] && arr[6] == arr[9])
+            {
+                return 1;
+            }
+            #endregion
+            #region Diagonal Winning Condition
+            else if (arr[1] == arr[5] && arr[5] == arr[9])
+            {
+                return 1;
+            }
+            else if (arr[3] == arr[5] && arr[5] == arr[7])
+            {
+                return 1;
+            }
+            #endregion
+            #region Checking For Draw
+            else if (arr[1] != '1' && arr[2] != '2' && arr[3] != '3' && arr[4] != '4' && arr[5] != '5' && arr[6] != '6' && arr[7] != '7' && arr[8] != '8' && arr[9] != '9')
+            {
+                return -1;
+            }
+            #endregion
+            else
+            {
+                return 0;
+            }
         }
     }
 }
